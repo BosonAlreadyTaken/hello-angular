@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TodoService } from './todo.service';
 import { Todo } from './todo.model';
+import {Router,ActivatedRoute,Params} from '@angular/router';
 
 @Component({
   // selector: 'app-todo',
@@ -12,9 +13,12 @@ export class TodoComponent implements OnInit {
   todos : Todo[] = [];
   desc: string = '';
 
-  constructor(private service: TodoService) {}
+  constructor(private service: TodoService,private route: ActivatedRoute,private router: Router) {}
   ngOnInit() {
-    this.getTodos();
+  this.route.params.forEach((params: Params) => {
+    let filter = params['filter'];
+    this.filterTodos(filter);
+  });
   }
   addTodo(){
     this.service
@@ -47,9 +51,9 @@ export class TodoComponent implements OnInit {
         ];
       });
   }
-  getTodos(): void {
+  filterTodos(filter: string): void{
     this.service
-      .getTodos()
+      .filterTodos(filter)
       .then(todos => this.todos = [...todos]);
   }
   onTextChanges(value) {
